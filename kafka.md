@@ -1,3 +1,5 @@
+# Kafka FAQ
+
 ## What is topic? What is partition? What is replication factor
 
 - A topic is a category or feed name to which records are published. Topics in Kafka are always multi-subscriber; that is, a topic can have zero, one, or many consumers that subscribe to the data written to it.

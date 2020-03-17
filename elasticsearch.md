@@ -1,6 +1,18 @@
-## What is an index, a shard and a replica?
+# Elasticsearch FAQ
+
+## What is an index, a shard and a replica
+
+- An index is like a table in a relational database. It has a mapping which contains a type, which contains the fields in the index.
+- An index is a logical namespace which maps to one or more primary shards and can have zero or more replica shards.
+- A shard is a piece of data in an index. Each shard contains a X number of entire documents  (documents can't be sliced) and each node of your cluster holds this piece accordingly to the "shard_number" configured to the index where the data is stored.
+- Elasticsearch distributes shards amongst all nodes in the cluster, and can move shards automatically from one node to another in the case of node failure, or the addition of new nodes.
+- Each primary shard can have zero or more replicas. A replica is a copy of the primary shard, and has two purposes:
+  - increase failover: a replica shard can be promoted to a primary shard if the primary fails
+increase performance: get and search requests can be handled by primary or replica shards.
+  - By default, each primary shard has one replica, but the number of replicas can be changed dynamically on an existing index. A replica shard will never be started on the same node as its primary shard.
 
 ## How many replicas has a shard and where can we configure it?
+
 
 ## How to see the list of indices? How to see list of shards? (please use API endpoints)
 
@@ -15,6 +27,8 @@
 ## What is the index template? How do we manage them?
 
 ## How to see the list of the nodes in a cluster?
+
+- `curl -X GET "localhost:9200/_cat/nodes?v&pretty"`
 
 ## What are the node roles in Elasticsearch? (Data, master, ingest, client) How roles can be assigned to a node?
 
