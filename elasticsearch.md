@@ -13,14 +13,68 @@ increase performance: get and search requests can be handled by primary or repli
 
 ## How many replicas has a shard and where can we configure it?
 
+- you set up number of shards  and number of replicas when you create an index
+- but number of created replicas depends of number of cluster nodes
+- example of index creating
+
+```json
+curl -X PUT "localhost:9200/twitter?pretty" -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 3,
+            "number_of_replicas" : 2
+        }
+    }
+}
+'
+```
 
 ## How to see the list of indices? How to see list of shards? (please use API endpoints)
 
+- `curl -X GET "localhost:9200/_cat/indices?v"`
+- `curl -X GET "localhost:9200/_cat/shards?v"`
+
 ## What is the cluster status? What does the color mean?
+
+- `curl -X GET "localhost:9200/_cluster/health?pretty"`
+- colors
+  - green
+    - All shards are assigned.
+  - yellow
+    - All primary shards are assigned, but one or more replica shards are unassigned. If a node in the cluster fails, some data could be unavailable until that node is repaired.
+  - red
+    - One or more primary shards are unassigned, so some data is unavailable. This can occur briefly during cluster startup as primary shards are assigned.
 
 ## How to see which shards are unassigned and the reason why are they unassigned?
 
+- `curl -X GET "localhost:9200/_cat/shards?h=i,sh,n,st,ur&v"`
+
 ## How to reassign the shards across the cluster?
+
+- By default, Elasticsearch will re-assign shards to nodes dynamically.
+- reroute API
+
+```json
+curl -X POST "localhost:9200/_cluster/reroute?pretty" -H 'Content-Type: application/json' -d'
+{
+    "commands" : [
+        {
+            "move" : {
+                "index" : "test", "shard" : 0,
+                "from_node" : "node1", "to_node" : "node2"
+            }
+        },
+        {
+          "allocate_replica" : {
+                "index" : "test", "shard" : 1,
+                "node" : "node3"
+          }
+        }
+    ]
+}
+'
+```
 
 ## What is the index mapping? Which mappings are applied to an index during its creation?
 
