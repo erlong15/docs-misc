@@ -8,6 +8,8 @@ sorted(xs.items(), key=lambda x: x[1], reverse=True)
 
 ## read and sort file
 ```python
+import re
+
 with open(path, 'r') as f:
         lines = f.readlines()
         pat = r"microsec: (\d*)"
@@ -18,6 +20,7 @@ with open(path, 'r') as f:
 
 ## argsparse
 ```python
+import argparse 
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -35,6 +38,8 @@ def get_args():
 ## set logger
 
 ```python
+import logging
+
 def set_logger():
     handlers = []
 
