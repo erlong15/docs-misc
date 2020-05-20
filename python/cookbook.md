@@ -80,6 +80,7 @@ expensive = heapq.nlargest(3, portfolio, key=lambda s: s['price'])
 
 ```python
 import signal
+import sys
 
 class StopException(Exception):
     def __init__(self, message):
@@ -91,6 +92,12 @@ def handler(signum, frame):
     # custom code
     raise StopException(msg)
 
+def excepthook(exc_type, exc_value, exc_traceback):
+    logger.error(f'Exception hook has been fired: {exc_value}', exc_info=(exc_type, exc_value, exc_traceback))
+
 signal.signal(signal.SIGINT, handler)
 signal.signal(signal.SIGTERM, handler)
+sys.excepthook = excepthook
+
 ```
+
