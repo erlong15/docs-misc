@@ -88,7 +88,7 @@ class StopException(Exception):
 
 def handler(signum, frame):
     msg = f'Signal handler called with signal{signum}'
-    mm.exit_flag = True
+    # custom code
     raise StopException(msg)
 
 signal.signal(signal.SIGINT, handler)
