@@ -74,3 +74,23 @@ portfolio = [
 cheap = heapq.nsmallest(3, portfolio, key=lambda s: s['price'])
 expensive = heapq.nlargest(3, portfolio, key=lambda s: s['price'])
 ```
+
+---
+## Exceptions
+
+```python
+import signal
+
+class StopException(Exception):
+    def __init__(self, message):
+        # Now for your custom code...
+        self.message = message
+
+def handler(signum, frame):
+    msg = f'Signal handler called with signal{signum}'
+    mm.exit_flag = True
+    raise StopException(msg)
+
+signal.signal(signal.SIGINT, handler)
+signal.signal(signal.SIGTERM, handler)
+```
