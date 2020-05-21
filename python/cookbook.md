@@ -9,15 +9,17 @@ sorted(xs.items(), key=lambda x: x[1], reverse=True)
 ## read from a text file by a pattern
 ```python
 import re
-def check_line(pat, line):
-    result = pat.search(l)
+def check_line(pattern, line):
+    result = pattern.search(line)
     if result:
         return int(result.group(1))
 
-with open(path, 'r') as f:
+if __name__ == 'main':
+    path = input('enter file name: ')
+    with open(path, 'r') as f:
         lines = f.readlines()
-        pat = re.compile(r"microsec: (\d+)")
-        lines = [check_line(pat, l) for l in lines if "microsec" in l]
+        pattern = re.compile(r"microsec: (\d+)")
+        lines = [check_line(pattern, l) for l in lines if "microsec" in l]
 ```
 
 ---
