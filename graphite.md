@@ -4,6 +4,8 @@
 
 - Whisper - is a fixed-size database, similar in design and purpose to RRD (round-robin-database)
 - Data points in Whisper are stored on-disk as big-endian double-precision floats.
+  - Each metric is stored in its own file
+  - Each file has a fixed size, which is regulated by retention policies 
   - Each data point is stored with its timestamp
   - Archives overlap time periods
   - All time-slots within an archive take up space whether or not a value is stored
@@ -70,6 +72,5 @@ aggregationMethod = min
   - **[aggregate]**
     - LINE_RECEIVER_PORT (2023)
     - PICKLE_RECEIVER_PORT (2024)
-    
 - graphite
   - port (8080)

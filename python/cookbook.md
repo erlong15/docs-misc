@@ -10,7 +10,6 @@ sorted(xs.items(), key=lambda x: x[1], reverse=True)
 ```python
 import re
 
-
 with open(path, "r", encoding="utf-8") as f:
         lines = f.readlines()
         pat = re.compile(r"microsec: (\d+)")
