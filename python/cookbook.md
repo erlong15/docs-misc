@@ -15,9 +15,9 @@ def check_line(pat, line):
         return int(result.group(1))
 
 with open(path, 'r') as f:
-        lines = f.readlines()
-        pat = re.compile(r"microsec: (\d+)")
-        lines = [check_line(pat, l) for l in lines if "microsec" in l]
+    lines = f.readlines()
+    pat = re.compile(r"microsec: (\d+)")
+    lines = [check_line(pat, l) for l in lines if "microsec" in l]
 ```
 
 ---
