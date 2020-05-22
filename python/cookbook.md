@@ -127,7 +127,7 @@ def handler(signum, frame):
     raise StopException(msg)
 
 def excepthook(exc_type, exc_value, exc_traceback):
-    logger.error(f'Exception hook has been fired: {exc_value}', exc_info=(exc_type, exc_value, exc_traceback))
+    logger.error(f"Exception hook has been fired: {exc_value}", exc_info=(exc_type, exc_value, exc_traceback))
 
 signal.signal(signal.SIGINT, handler)
 signal.signal(signal.SIGTERM, handler)
@@ -142,4 +142,82 @@ sys.excepthook = excepthook
 data = [1, 2, 3, 4, 5, 6, 7, 8]
 n = 3
 [data[i:(i + n)] for i in range(0, len(data), n)]  # --> [[1, 2, 3], [4, 5, 6], [7, 8]]
+```
+
+---
+## some useful itertools examples
+
+```python
+
+from itertools import chain, combinations, count, groupby, islice, zip_longest
+
+
+# infinite iterator which returns sequenced values with defined step, like 1, 2, 3...
+counter = count()
+counter10 = count(10, 10)
+abc = "abcd"
+[i for i in zip(abc, counter)]  # --> [("a", 0), ("b", 1), ("c", 2), ("d", 3)]
+[i for i in zip(abc, counter10)]  # --> [("a", 10), ("b", 20), ("c", 30), ("d", 40)]
+
+
+# iterator which combines several iterables as one
+# Important note: expired iterator, can be used only ones
+abc = "abcd"
+efg = "efgh"
+chars = ["i", "j", "k", "l"]
+[i for i in chain(abc, efg, chars)]  # --> ["a", "b", "c", "d", "e", "f",
+                                     #     "g", "h", "i", "j", "k", "l"]
+
+
+# similar iterator which can flat included iterables
+strings = ["abcd", "efgh"]
+numbers = [[1, 2, 3], [4, 5, 6]]
+[i for i in chain.from_iterable(chain(strings, numbers))]  # --> ["a", "b", "c", "d", "e", "f",
+                                                           #     "g", "h", 1, 2, 3, 4, 5, 6]
+
+
+# iterator which can group some values by defined key
+# Important notes: requires sorted data
+#                  expired iterator, can be used only ones
+#                  is not the same SQL's GROUP BY
+string = "abacbcacc"
+[(i, list(j)) for i, j in groupby(sorted(string))]  # --> [("a", ["a", "a", "a"]), ("b", ["b", "b"]),
+                                                    #     ("c", ["c", "c", "c", "c"])]
+
+pairs = [("c", 300), ("c", 100), ("a", 0),
+        ("a", 1), ("c", 400), ("a", 2),
+        ("b", 10), ("b", 20), ("c", 200)]
+
+grouped = groupby(sorted(pairs, key=lambda x: x[0]), key=lambda y: y[0])
+[(i, list(j)) for i, j in grouped]  # --> [("a", [("a", 0), ("a", 1), ("a", 2)]),
+                                    #     ("b", [("b", 10), ("b", 20)]),
+                                    #     ("c", [("c", 300), ("c", 100), ("c", 400), ("c", 200)])]
+# `grouped` can not be use one more time, see notes
+[(i, list(j)) for i, j in grouped]  # --> []
+
+
+# iterator which is the same as indexing operator, but it provides values one by one instead full range
+# Important note: expired iterator, can be used only ones
+data = [1, 2, 3, 4, 5, 6, 7, 8]
+data[1:5]  # --> [2, 3, 4, 5] given range here is real list of values
+sliced = islice(data, 1, 5)  # --> no values, only iterator that can be used for extracting values
+[next(sliced) for _ in range(2)]  # --> [2, 3]
+[next(sliced) for _ in range(2)]  # --> [4, 5]
+
+
+# iterator which is similar to zip, but allows you filling absent values with defined pad
+abc = "abcd"
+numbers = [1, 2]
+[i for i in zip(abc, numbers)]  # --> [("a", 1), ("b", 2)] due `numbers` is shorter than `abc`
+[i for i in zip_longest(abc, numbers, fillvalue=0)]  # --> [("a", 1), ("b", 2), ("c", 0), ("d", 0)]
+
+
+# combinatoric iterator which can generate all possible combinations of defined length
+# Important notes: no repeated elements
+#                  expired iterator, can be used only ones
+abc = "abcd"
+cs2 = combinations(abc, 2)
+cs3 = combinations(abc, 3)
+list(cs2)  # --> [("a", "b"), ("a", "c"), ("a", "d"), ("b", "c"), ("b", "d"), ("c", "d")]
+list(cs3)  # --> [("a", "b", "c"), ("a", "b", "d"), ("a", "c", "d"), ("b", "c", "d")]
 ```
