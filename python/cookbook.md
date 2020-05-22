@@ -143,3 +143,24 @@ data = [1, 2, 3, 4, 5, 6, 7, 8]
 n = 3
 [data[i:(i + n)] for i in range(0, len(data), n)]  # --> [[1, 2, 3], [4, 5, 6], [7, 8]]
 ```
+
+---
+## Generator objects
+def get_logline(file_name):
+    """
+    create generator from 11.log file
+    pattern is like 19.05.2020 18:24:03.044269
+    :return:
+    """
+    with open(file_name, "r") as log_file:
+        for line in log_file:
+            pattern = re.compile(r"\d{2}.\d{2}.\d{4} \d{2}:\d{2}:\d{2}.\d{3}")
+            result = pattern.search(line)
+            if result:
+                yield result.group(0)
+
+
+def test_gen():
+    log = get_logline("11.log")
+    for line in log:
+        print(line)
