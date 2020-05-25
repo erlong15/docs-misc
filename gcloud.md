@@ -1,3 +1,4 @@
+```bash
 gcloud auth list
 gcloud auth login
 gcloud projects list
@@ -7,3 +8,4 @@ gcloud compute zones list
 gcloud services list
 gcloud services list --available
 gcloud services enable
+```
