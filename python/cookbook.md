@@ -221,3 +221,60 @@ cs3 = combinations(abc, 3)
 list(cs2)  # --> [("a", "b"), ("a", "c"), ("a", "d"), ("b", "c"), ("b", "d"), ("c", "d")]
 list(cs3)  # --> [("a", "b", "c"), ("a", "b", "d"), ("a", "c", "d"), ("b", "c", "d")]
 ```
+
+---
+## some asyncio examples
+
+```python
+
+# this example demonstrates handling shell command in asynchronous way
+# here it is fping which checks if given hosts are alive asynchronously
+import asyncio
+from itertools import chain
+
+
+async def is_alive(hosts):
+    # create subprocess for shell command execution, here it is fping tool
+    shell_cmd = asyncio.create_subprocess_shell(f"fping -a -t 100 {hosts}",
+                                                stdin=asyncio.subprocess.DEVNULL,
+                                                stdout=asyncio.subprocess.PIPE,
+                                                stderr=asyncio.subprocess.PIPE)
+    result = await shell_cmd
+    msg, _ = await result.communicate()
+
+    return msg
+
+
+# execute shell command with given arguments and gather output data
+async def checking_alive(hosts):
+    # task list from arguments, one task per provided argument
+    checking_hosts = [is_alive(h) for h in hosts]
+    # wait for performing all tasks
+    checked_hosts = await asyncio.gather(*checking_hosts)
+
+    return [x for x in chain.from_iterable(i.decode("utf-8", "ignore").split("\n") for i in checked_hosts if i) if x]
+
+
+# handling results
+async def print_result(hosts):
+    # wait for data gathering
+    alive_hosts = await checking_alive(hosts)
+
+    for h in alive_hosts:
+        print(h)
+
+
+# create subprocess for each argument, here it is a host IP
+hosts = ["192.168.88.1", "127.0.0.1", "8.8.8.8", "1.1.1.1", "8.8.4.4", "192.168.0.1"]
+asyncio.run(print_result(hosts))
+
+# making subprocess for each argument if there are many of them could be inefficient
+# but if shell command can handle several of them simultaneously, we can use this feature
+# create subprocess for each several arguments, here those are hosts IPs
+# due fping can handle several hosts at the same time
+sliced_hosts = [" ".join(hosts[i:i + 10]) for i in range(0, len(hosts), 10)]  # --> ["host1 host2 host3...",
+                                                                              #     "host11 host12 host13...", 
+                                                                              #     "hostN...", ...]
+asyncio.run(print_result(sliced_hosts))
+
+```
