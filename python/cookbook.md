@@ -277,4 +277,40 @@ sliced_hosts = [" ".join(hosts[i:i + 10]) for i in range(0, len(hosts), 10)]  # 
                                                                               #     "hostN...", ...]
 asyncio.run(print_result(sliced_hosts))
 
+
+# this example demonstrates working with some asyncio libs
+# here there is a list of image url that will be downloaded
+# and saved on disk asynchronously
+import asyncio
+import aiofiles
+import aiohttp
+
+
+async def download_images(save_path, links):
+    # dowload image and save one
+    async def download_save(session, name, url):
+        async with session.get(url) as resp:
+            if resp.status != 200:
+                return
+
+            extention = url.split(".")[-1]
+            # writing file incrementally and asynchronously,
+            # chunk by chunk as new portion of data is received
+            f = await aiofiles.open(f"{save_path}/{name}.{extention}", mode='wb')
+            await f.write(await resp.read())  # write new chunk if only one is received
+            await f.close()
+
+    timeout = aiohttp.ClientTimeout(total=30)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        tasks = [download_save(session, name, url) for name, url in links]
+        await asyncio.gather(*tasks)
+
+links = [("kitty", "https://example.com/1.jpg"),
+        ("doggy", "https://example.com/3.jpg"),
+        ("panda", "https://example.com/117.png")]
+save_path = "/images"  # here we suggest directory is reachable and open for writing
+
+asyncio.run(download_images(save_path, links))
+# as a result we will see doggy.jpg, kitty.jpg, panda.png in /images directory
+
 ```
