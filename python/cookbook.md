@@ -223,7 +223,7 @@ list(cs3)  # --> [("a", "b", "c"), ("a", "b", "d"), ("a", "c", "d"), ("b", "c", 
 ```
 
 ---
-## some asyncio examples
+## Some asyncio examples
 
 ```python
 
@@ -313,4 +313,62 @@ save_path = "/images"  # here we suggest directory is reachable and open for wri
 asyncio.run(download_images(save_path, links))
 # as a result we will see doggy.jpg, kitty.jpg, panda.png in /images directory
 
+```
+
+---
+## Bypassing nested dict of any depth and structure ([BFS](https://www.guru99.com/breadth-first-search-bfs-graph-example.html))
+
+```python
+# Here BFS over queue approach is used,
+# see BFS details: https://www.guru99.com/breadth-first-search-bfs-graph-example.html
+
+from queue import Queue
+
+# example multidepth dict with non-reqular structure
+yaml = {
+  1: {
+    100: {
+      1000: {"a1000": "A1000", "b1000": "B1000"},
+      1001: {"a1001": "A1001"}},
+    101: {},
+    102: {"a102": "A102", "b102": "B102", "c102": "C102"}},
+  2: {
+    200: {},
+    201: {},
+    202: {
+      2020: {"a2020": "A2020"}},
+    203: {"a203": "A203", "c203": "C203"}}}
+
+# briefly:
+# every dict will be added to queue
+# every key in dict will be checked if one is dict or not
+# if key is dict it will be added to queue
+# if key is not dict it will be handled for demanding changes
+
+q = Queue()
+q.put(yaml)
+
+while not q.empty():
+  elem = q.get()
+  for k, v in elem.items():
+    # only dicts will be put in queue for further handling
+    if isinstance(v, dict):
+      q.put(v)
+    else:
+      # here make any changes with values that are 100% non-dict
+      # in current example all values swapped with lowercase 1st symbol
+      elem[k] = v[0].lower()
+      
+# result
+# {1: {
+#   100: {
+#     1000: {'a1000': 'a', 'b1000': 'b'},
+#     1001: {'a1001': 'a'}},
+#   101: {},
+#   102: {'a102': 'a', 'b102': 'b', 'c102': 'c'}},
+#  2: {200: {},
+#   201: {},
+#   202: {
+#     2020: {'a2020': 'a'}},
+#   203: {'a203': 'a', 'c203': 'c'}}}
 ```
