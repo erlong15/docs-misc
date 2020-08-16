@@ -341,9 +341,9 @@ yaml = {
 
 # briefly:
 # every dict will be added to queue
-# every key in dict will be checked if one is dict or not
-# if key is dict it will be added to queue
-# if key is not dict it will be handled for demanding changes
+# every value in dict will be checked if one is dict or not
+# if value is dict it will be added to queue
+# if value is not dict it will be handled for demanding changes
 
 q = Queue()
 q.put(yaml)
